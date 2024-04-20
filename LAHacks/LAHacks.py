@@ -2,9 +2,9 @@
 
 from rxconfig import config
 from Backend.gemini import image_mood_generator
-
 import reflex as rx
 import PIL.Image
+from LAHacks.Login import login
 
 docs_url = "https://reflex.dev/docs/getting-started/introduction/"
 filename = f"{config.app_name}/{config.app_name}.py"
@@ -83,7 +83,7 @@ def index():
                         rx.upload(
                             rx.vstack(
                                 rx.button("Select File", color=color, bg="white", border=f"1px solid {color}"),
-                                rx.text("Drag and drop files here or click to select files", class_name="text-4xl text-center text-blue-500",),
+                                rx.text("Drag and drop files here or click to select files", class_name="lg:text-2xl md:text-lg sm:text-md"),
                             ),
                             id="upload2",
                             multiple=False,
@@ -99,13 +99,15 @@ def index():
                             border=f"1px dotted {color}",
                             padding="5em",
                             align="center",
+                            height="50vh",
+                            width="50vw",
                         ),
                     ),
                     rx.button(
                         "Clear",
                         on_click= State.clear_images(),
                     ),
-                    rx.text(State.results, class_name="text-4xl text-center text-blue-500",), 
+                    rx.text(State.results, class_name="lg:text-2xl md:text-lg sm:text-md text-center text-blue-500",), 
                     padding="5em",
                     align="center",                 
                 ),
@@ -113,4 +115,5 @@ def index():
         )
 
 app = rx.App()
-app.add_page(index)
+app.add_page(index, route = '/')
+app.add_page(login, route = '/login')
