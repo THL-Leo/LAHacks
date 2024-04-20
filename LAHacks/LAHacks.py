@@ -27,7 +27,6 @@ class State(rx.State):
         """
         for file in files:
             upload_data = await file.read()
-            self.total_bytes += len(upload_data)
             outfile = rx.get_upload_dir() / file.filename
 
             # Save the file.

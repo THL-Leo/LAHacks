@@ -2,9 +2,13 @@
 import google.generativeai as genai
 
 import PIL.Image
+from dotenv import load_dotenv
+import os
 
 async def image_mood_generator(path):
-  GOOGLE_API_KEY=''
+  load_dotenv()
+  secret_value = os.getenv("GOOGLE_API_KEY")
+  GOOGLE_API_KEY=secret_value
 
   genai.configure(api_key=GOOGLE_API_KEY)
 
