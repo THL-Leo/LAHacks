@@ -27,6 +27,7 @@ class State(rx.State):
         """
         for file in files:
             upload_data = await file.read()
+            self.total_bytes += len(upload_data)
             outfile = rx.get_upload_dir() / file.filename
 
             # Save the file.
@@ -53,6 +54,7 @@ class State(rx.State):
         # Clear the list of images and set has_img to False
         self.img_name.clear()
         self.has_img = False
+        self.results = ""
 
     # async def call_gemini(self, input_list, width, height):
     #     """Call the gemini API."""
@@ -85,7 +87,7 @@ def index():
                                 rx.text("Drag and drop files here or click to select files", class_name="text-4xl text-center text-blue-500",),
                             ),
                             id="upload2",
-                            multiple=True,
+                            multiple=False,
                             accept = {
                                 "image/png": [".png"],
                                 "image/jpeg": [".jpg", ".jpeg"],
@@ -94,7 +96,7 @@ def index():
                             max_files=1,
                             disabled=False,
                             on_keyboard=True,
-                            on_drop=State.handle_upload(rx.upload_files(upload_id="upload2")),
+                            on_drop=State.handle_upload(rx.upload_files(upload_id="upload2", multiple=False)),
                             border=f"1px dotted {color}",
                             padding="5em",
                             align="center",
@@ -110,9 +112,6 @@ def index():
                 ),
                 align="center",
         )
-
-
-
 
 app = rx.App()
 app.add_page(index)
