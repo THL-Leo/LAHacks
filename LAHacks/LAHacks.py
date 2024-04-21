@@ -4,7 +4,8 @@ from rxconfig import config
 from Backend.gemini import image_mood_generator
 import reflex as rx
 import PIL.Image
-from LAHacks.Login import login
+from LAHacks.Login import *
+from Backend.spotify import *
 
 docs_url = "https://reflex.dev/docs/getting-started/introduction/"
 filename = f"{config.app_name}/{config.app_name}.py"
@@ -45,8 +46,11 @@ class State(rx.State):
         # Call image_mood_generator with the uploaded images
         # For simplicity, assuming image_mood_generator takes a list of image paths
         image_paths = [str(rx.get_upload_dir() / img[0]) for img in self.img_name]
-        result = await image_mood_generator(image_paths)
-        self.results = result.candidates[0].content.parts[0].text
+        login_state = await self.get_state(Login_state)
+        print('Before looking for playlist ', login_state.access_code)
+        result = await spotify.get_playlists(login_state.access_code,image_paths)
+        print('Result ', result)
+        # self.results = result.candidates[0].content.parts[0].text
 
     async def clear_images(self):
         """Clear the list of images."""
@@ -60,7 +64,6 @@ class State(rx.State):
     #     return image_mood_generator(input_list, width, height)
 
 color = "rgb(107,99,246)"
-
 
 def index():
     """The main view."""
@@ -111,9 +114,12 @@ def index():
                     padding="5em",
                     align="center",                 
                 ),
+                # rx.vstack(
+                #     rx.text("Music recommendation: "),
+                # ),
                 align="center",
         )
 
 app = rx.App()
-app.add_page(index, route = '/')
+app.add_page(index, route = '/', on_load=Login_state.redirect_if_authorized)
 app.add_page(login, route = '/login')
