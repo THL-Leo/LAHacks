@@ -8,6 +8,7 @@ import Backend.spotify as spotify
 class Login_state(rx.State):
     authorization_code: str = rx.LocalStorage('')
     access_code: str = rx.LocalStorage('')
+    # refresh_token: str = rx.LocalStorage('')
     
     @rx.var
     def parse_URI(self):
@@ -22,9 +23,7 @@ class Login_state(rx.State):
     def logout(self):
         self.access_code = ''
         self.authorization_code = ''
-
-CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_API", "")
-
+        return rx.redirect("/login")
 
 def login() -> rx.Component:
     return rx.center(

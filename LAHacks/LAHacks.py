@@ -16,6 +16,7 @@ class State(rx.State):
 
     # The images to show.
     img_name: list[str] = []
+    tracks = []
     # Whether there are images.
     has_img: bool = False
     results: str = ""
@@ -47,9 +48,7 @@ class State(rx.State):
         # For simplicity, assuming image_mood_generator takes a list of image paths
         image_paths = [str(rx.get_upload_dir() / img[0]) for img in self.img_name]
         login_state = await self.get_state(Login_state)
-        print('Before looking for playlist ', login_state.access_code)
         result = await spotify.get_playlists(login_state.access_code,image_paths)
-        print('Result ', result)
         # self.results = result.candidates[0].content.parts[0].text
 
     async def clear_images(self):
@@ -59,9 +58,27 @@ class State(rx.State):
         self.has_img = False
         self.results = ""
 
+    async def pull_tracks(self):
+        self.tracks = spotify.get_playlists()
+        # print(self.tracks)
+        
+
+    # async def info(self):
+    #     login_state = await self.get_state(Login_state)
+    #     headers = {
+    #         'Authorization': f"Bearer {login_state.access_code}"
+    #     }
+    # passes in access token through headers
+        # response = requests.get('https://api.spotify.com/v1/me', headers=headers)
+
+    # async def renew(self):
+    #     login_state = await self.get_state(Login_state)
+    #     login_state.access_code = await spotify.renew_token(login_state.refresh_token)
+
     # async def call_gemini(self, input_list, width, height):
     #     """Call the gemini API."""
     #     return image_mood_generator(input_list, width, height)
+
 
 color = "rgb(107,99,246)"
 
@@ -109,6 +126,10 @@ def index():
                     rx.button(
                         "Clear",
                         on_click= State.clear_images(),
+                    ),
+                    rx.button(
+                        "Logout",
+                        on_click= Login_state.logout(),
                     ),
                     rx.text(State.results, class_name="lg:text-2xl md:text-lg sm:text-md text-center text-blue-500",), 
                     padding="5em",

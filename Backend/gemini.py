@@ -24,7 +24,9 @@ async def image_mood_generator(path):
                                      classical, retro, or euphoric. 
                                      Feel free to interpret the mood in 
                                      any way you see fit, but only choose one word, I want no other words or 
-                                     sentences generated.""", img], stream=True)
+                                     sentences generated. Again, please choose only from the follow words: happy, sad, energetic, angry, chill, carefree, 
+                                     classical, retro, or euphoric.""", img], stream=True)
+  
   response.resolve()
   return response
 
