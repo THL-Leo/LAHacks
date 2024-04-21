@@ -3,12 +3,15 @@
 from rxconfig import config
 from Backend.gemini import image_mood_generator
 import reflex as rx
+from reflex.components.el import iframe
 import PIL.Image
 from LAHacks.Login import *
 from Backend.spotify import *
+from .loading_icon import loading_icon
 
 docs_url = "https://reflex.dev/docs/getting-started/introduction/"
 filename = f"{config.app_name}/{config.app_name}.py"
+
 
 
 class State(rx.State):
@@ -16,9 +19,11 @@ class State(rx.State):
 
     # The images to show.
     img_name: list[str] = []
-    tracks: list[tuple[str, str]] = []
+    tracks: list[tuple[str, str, str]] = []
     # Whether there are images.
     has_img: bool = False
+    processing: bool = False
+    mood: str = ""
 
     async def handle_upload(self, files: list[rx.UploadFile]):
         """Handle the upload of file(s).
@@ -26,6 +31,7 @@ class State(rx.State):
         Args:
             files: The uploaded files.
         """
+        self.processing = True
         for file in files:
             upload_data = await file.read()
             outfile = rx.get_upload_dir() / file.filename
@@ -44,7 +50,8 @@ class State(rx.State):
         self.has_img = True
 
         image_paths = [str(rx.get_upload_dir() / img[0]) for img in self.img_name]
-        self.tracks = await spotify.get_playlists(image_paths)
+        self.tracks, self.mood = await spotify.get_playlists(image_paths)
+        self.processing = False
 
         # Call image_mood_generator with the uploaded images
         # For simplicity, assuming image_mood_generator takes a list of image paths
@@ -55,6 +62,7 @@ class State(rx.State):
         # Clear the list of images and set has_img to False
         self.img_name.clear()
         self.has_img = False
+        self.tracks.clear()
         
         
 
@@ -76,6 +84,11 @@ class State(rx.State):
 
 
 color = "rgb(107,99,246)"
+embed = "<iframe style=\"" + "border-radius:12px\"" + " src=\"" + "https://open.spotify.com/embed/track/" 
+embed2 = "?utm_source=generator\" " + "width=\"" + "100%\" " + "height=" + "\"152\" " + "frameBorder=" + "\"0\" " + "allowfullscreen=\"\"" + " allow=\"" + "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" " + "loading=" + "\"lazy\"" + "></iframe>"
+
+url_fstr = 'https://open.spotify.com/embed/track/{track_id}?utm_source=generator'
+embed_fstr = '<iframe style="border-radius:12px" src={src_url} width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
 
 def index():
     """The main view."""
@@ -95,11 +108,19 @@ def index():
                             columns="1",
                             spacing="1",
                         ),
+                        rx.center(
                         rx.upload(
-                            rx.vstack(
-                                rx.button("Select File", color=color, bg="white", border=f"1px solid {color}"),
-                                rx.text("Drag and drop files here or click to select files", class_name="lg:text-2xl md:text-lg sm:text-md"),
-                            ),
+                                rx.cond(
+                                    State.processing,
+                                    loading_icon(height="1em"),
+                                    rx.vstack(
+                                        rx.button(
+                                            rx.icon(tag="image"),
+                                            color_scheme="jade", width="10vw", height="5vh",),
+                                            #"Select File", color=color, bg="white", border=f"1px solid {color}"),
+                                        rx.text("Upload from Device", class_name="text-gray-100 lg:text-2xl md:text-lg sm:text-md "),
+                                    ),
+                                ),
                             id="upload2",
                             multiple=False,
                             accept = {
@@ -111,38 +132,42 @@ def index():
                             disabled=False,
                             on_keyboard=True,
                             on_drop=State.handle_upload(rx.upload_files(upload_id="upload2", multiple=False)),
-                            border=f"1px dotted {color}",
+                            border=f"5px solid {color}",
                             padding="5em",
                             align="center",
                             height="50vh",
                             width="50vw",
+                            border_color= rx.color("gray", 2),
+                        ),
                         ),
                     ),
-                    rx.button(
-                        "Clear",
-                        on_click= State.clear_images(),
-                    ),
-                    rx.button(
-                        "Logout",
-                        on_click= Login_state.logout(),
+                    rx.hstack(
+                        rx.button(
+                            "Clear",
+                            on_click= State.clear_images(),
+                        ),
+                        rx.button(
+                            "Logout",
+                            on_click= Login_state.logout(),
+                        ),
                     ),
                     rx.grid(
-                            rx.foreach(
-                                State.tracks,
-                                lambda song: rx.vstack(
-                                    rx.text(song[0]),
-                                    rx.text(song[1]),
-                                    align="center",
-                                ),
-                            ),
-                            columns="1",
-                            spacing="1",
+                        rx.foreach(
+                            State.tracks,
+                            lambda song: iframe(src=url_fstr.format(track_id=song[2])) # rx.html((embed_fstr.format(src_url= song[2]))),
                         ),
+                    columns="1",
+                    spacing="1",
+                ),
+
                     padding="5em",
-                    align="center",                 
+                    align="center", 
+                    background_color=rx.color("gray", 12),
+                    min_height="100vh", 
+                    min_width="100vw",            
                 ),
                 align="center",
-        )
+            )
 
 app = rx.App()
 app.add_page(index, route = '/', on_load=Login_state.redirect_if_authorized)

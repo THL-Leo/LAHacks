@@ -7,6 +7,7 @@ import spotipy
 from spotipy import SpotifyOAuth
 from dotenv import load_dotenv
 from LAHacks.Login import *
+import random
 
 # information provided by spotify
 # CLIENT_ID = '92195f066c464f1089b36bd63547285f'
@@ -107,6 +108,9 @@ def get_playlist_uri(playlist_link):
 async def get_playlists(img):
     raw_mood = await image_mood_generator(img)
     mood = raw_mood.candidates[0].content.parts[0].text.lower().strip(' ')
+    if mood not in genres:
+        mood, _ = random.choice(list(genres.items()))
+    
     # print(mood, genres[mood], "https://api.spotify.com/v1/playlists/{}".format(genres[mood]))
     # playlist_name_mood = f"{mood} mix"
     # headers = {
@@ -126,9 +130,10 @@ async def get_playlists(img):
     for track in sp.playlist_tracks(playlist_uri, limit=10)["items"]:
         track_name = track["track"]["name"]
         track_artist = track["track"]["artists"][0]["name"]
-        result = track_name, track_artist
+        track_id = track["track"]["id"]
+        result = track_name, track_artist, track_id
         tracks.append(result)
-    return tracks
+    return tracks, mood
 
     #return mood_playlist
 

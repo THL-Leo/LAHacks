@@ -17,7 +17,7 @@ class Login_state(rx.State):
             self.access_code = spotify.callback(self.authorization_code)
 
     def redirect_if_authorized(self):
-        if self.authorization_code == '':
+        if self.authorization_code == None or self.authorization_code == '':
             return rx.redirect("/login")
 
     def logout(self):
@@ -28,7 +28,9 @@ class Login_state(rx.State):
 def login() -> rx.Component:
     return rx.center(
         rx.vstack(
-            rx.box("Login to Spotify", class_name="p-4", style={"width": "300px"}),
-            rx.link("Login", href=spotify.get_auth_URI(), class_name="btn btn-primary"),
+            # rx.box("Login to Spotify", class_name="p-4", style={"width": "300px"}),
+            rx.image(src="/landing_page.png", class_name='object-fill padding-0'),
+            rx.link("Login", href=spotify.get_auth_URI(), class_name="btn btn-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 "),
+            # min_width="100vw",
         ),
     )
