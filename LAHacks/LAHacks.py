@@ -16,10 +16,9 @@ class State(rx.State):
 
     # The images to show.
     img_name: list[str] = []
-    tracks = []
+    tracks: list[tuple[str, str]] = []
     # Whether there are images.
     has_img: bool = False
-    results: str = ""
 
     async def handle_upload(self, files: list[rx.UploadFile]):
         """Handle the upload of file(s).
@@ -44,11 +43,11 @@ class State(rx.State):
         # Update the has_img var because images are uploaded
         self.has_img = True
 
+        image_paths = [str(rx.get_upload_dir() / img[0]) for img in self.img_name]
+        self.tracks = await spotify.get_playlists(image_paths)
+
         # Call image_mood_generator with the uploaded images
         # For simplicity, assuming image_mood_generator takes a list of image paths
-        image_paths = [str(rx.get_upload_dir() / img[0]) for img in self.img_name]
-        login_state = await self.get_state(Login_state)
-        result = await spotify.get_playlists(login_state.access_code,image_paths)
         # self.results = result.candidates[0].content.parts[0].text
 
     async def clear_images(self):
@@ -56,11 +55,7 @@ class State(rx.State):
         # Clear the list of images and set has_img to False
         self.img_name.clear()
         self.has_img = False
-        self.results = ""
-
-    async def pull_tracks(self):
-        self.tracks = spotify.get_playlists()
-        # print(self.tracks)
+        
         
 
     # async def info(self):
@@ -131,13 +126,21 @@ def index():
                         "Logout",
                         on_click= Login_state.logout(),
                     ),
-                    rx.text(State.results, class_name="lg:text-2xl md:text-lg sm:text-md text-center text-blue-500",), 
+                    rx.grid(
+                            rx.foreach(
+                                State.tracks,
+                                lambda song: rx.vstack(
+                                    rx.text(song[0]),
+                                    rx.text(song[1]),
+                                    align="center",
+                                ),
+                            ),
+                            columns="1",
+                            spacing="1",
+                        ),
                     padding="5em",
                     align="center",                 
                 ),
-                # rx.vstack(
-                #     rx.text("Music recommendation: "),
-                # ),
                 align="center",
         )
 

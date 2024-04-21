@@ -104,7 +104,7 @@ def get_playlist_uri(playlist_link):
     return playlist_link.split("/")[-1].split("?")[0]
 
 
-async def get_playlists(access_token, img):
+async def get_playlists(img):
     raw_mood = await image_mood_generator(img)
     mood = raw_mood.candidates[0].content.parts[0].text.lower().strip(' ')
     # print(mood, genres[mood], "https://api.spotify.com/v1/playlists/{}".format(genres[mood]))
@@ -128,7 +128,6 @@ async def get_playlists(access_token, img):
         track_artist = track["track"]["artists"][0]["name"]
         result = track_name, track_artist
         tracks.append(result)
-    print(tracks)
     return tracks
 
     #return mood_playlist
