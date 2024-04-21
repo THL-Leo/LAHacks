@@ -116,7 +116,7 @@ def index():
                                     rx.vstack(
                                         rx.button(
                                             rx.icon(tag="image"),
-                                            color_scheme="jade", width="10vw", height="5vh",),
+                                            color_scheme="jade", width="15vw", height="10vh",),
                                             #"Select File", color=color, bg="white", border=f"1px solid {color}"),
                                         rx.text("Upload from Device", class_name="text-gray-100 lg:text-2xl md:text-lg sm:text-md "),
                                     ),
@@ -144,20 +144,23 @@ def index():
                     rx.hstack(
                         rx.button(
                             "Clear",
+                            color_scheme="jade",
                             on_click= State.clear_images(),
                         ),
                         rx.button(
                             "Logout",
+                            color_scheme="jade",
                             on_click= Login_state.logout(),
                         ),
                     ),
                     rx.grid(
                         rx.foreach(
                             State.tracks,
-                            lambda song: iframe(src=url_fstr.format(track_id=song[2])) # rx.html((embed_fstr.format(src_url= song[2]))),
+                            lambda song: iframe(src=url_fstr.format(track_id=song[2]), class_name='object-fill h-300 w-150') # rx.html((embed_fstr.format(src_url= song[2]))),
                         ),
                     columns="1",
-                    spacing="1",
+                    spacing="0",
+                    class_name = 'resize-y',
                 ),
 
                     padding="5em",

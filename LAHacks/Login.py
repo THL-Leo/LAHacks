@@ -29,8 +29,8 @@ def login() -> rx.Component:
     return rx.center(
         rx.vstack(
             # rx.box("Login to Spotify", class_name="p-4", style={"width": "300px"}),
-            rx.image(src="/landing_page.png", class_name='object-fill padding-0'),
+            rx.image(src="/landing_page.png", class_name='object-fill padding-0 bg-local h-1000 w-450'),
+            rx.image(src="/sound.gif", class_name='absolute translate-y-1/4 object-fill padding-0 z-1'),
             rx.link("Login", href=spotify.get_auth_URI(), class_name="btn btn-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 "),
-            # min_width="100vw",
         ),
     )
