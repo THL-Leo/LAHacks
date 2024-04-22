@@ -1,69 +1,63 @@
-# Welcome to Reflex!
+# Moodify
 
-This is the base Reflex template - installed when you run `reflex init`.
+Moodify is a project developed for LA Hacks 2024 that aims to enhance the user experience by providing a personalized soundtrack for their memories. By leveraging the Spotify API for authentication and song data, and the Google Gemini Pro Vision API for identifying semantics, Moodify offers a unique way for users to connect with their favorite songs through their photos.
 
-If you want to use a different template, pass the `--template` flag to `reflex init`.
-For example, if you want a more basic starting point, you can run:
+## Features
 
+- **Personalized Soundtrack:** Moodify matches the user's photo input with songs from their Mixes, providing a personalized soundtrack for their memories.
+- **Authentication:** Users can securely authenticate their Spotify account to access their favorite songs.
+- **Semantics Identification:** The Google Gemini Pro Vision API is used to identify semantics in the user's photos, enhancing the matching process.
+
+## Technologies Used
+
+- **Reflex Web Framework:** Used for developing the web application, providing a smooth and interactive user interface.
+- **Spotify API:** Used for authentication and accessing the user's favorite songs.
+- **Google Gemini Pro Vision API:** Used for identifying semantics in the user's photos.
+
+## Team Members
+
+- [**Leo Lee**](https://www.linkedin.com/in/thl-leo/)
+- [**Daphne Cheng**](https://www.linkedin.com/in/daphne--cheng/)
+- [**Ryan Da**](https://www.linkedin.com/in/ryan-da/)
+- [**Yoshi Nakachi**](https://www.linkedin.com/in/yoshinakachi/)
+
+## How to Install
+
+To install and run Moodify, follow these steps:
+
+1. Set up a Python virtual environment using venv:
 ```bash
-reflex init --template blank
+python3 -m venv myenv
+source myenv/bin/activate
+```
+2. Clone the Moodify repository:
+```bash
+git clone https://github.com/your-username/moodify.git
+cd LAHacks
+```
+3. Install the required Python packages:
+```bash
+pip install -r requirements.txt
+```
+4. Start the server using Reflex:
+```bash
+reflex run
 ```
 
-## About this Template
+## How to Use
 
-This template has the following directory structure:
+To use Moodify, follow these steps:
 
-```bash
-├── README.md
-├── assets
-├── rxconfig.py
-└── {your_app}
-    ├── __init__.py
-    ├── components
-    │   ├── __init__.py
-    │   └── sidebar.py
-    ├── pages
-    │   ├── __init__.py
-    │   ├── dashboard.py
-    │   ├── index.py
-    │   └── settings.py
-    ├── styles.py
-    ├── templates
-    │   ├── __init__.py
-    │   └── template.py
-    └── {your_app}.py
-```
+1. Sign in with your Spotify account to access your favorite songs.
+2. Upload a photo that represents a memory or moment.
+3. Moodify will match the photo with a song from your favorite list, creating a personalized soundtrack for your memory.
 
-See the [Project Structure docs](https://reflex.dev/docs/getting-started/project-structure/) for more information on general Reflex project structure.
+## Future Enhancements
 
-### Adding Pages
+- Training Gemini and expanding the semantics pool for better matching accuracy.
+- Adding social sharing features to allow users to share their personalized soundtracks with friends.
+- Make a standalone social media app using cross platform languages such as Flutter or React Native
 
-In this template, the pages in your app are defined in `{your_app}/pages/`.
-Each page is a function that returns a Reflex component.
-For example, to edit this page you can modify `{your_app}/pages/index.py`.
-See the [pages docs](https://reflex.dev/docs/pages/routes/) for more information on pages.
+## Feedback
 
-In this template, instead of using `rx.add_page` or the `@rx.page` decorator,
-we use the `@template` decorator from `{your_app}/templates/template.py`.
-
-To add a new page:
-
-1. Add a new file in `{your_app}/pages/`. We recommend using one file per page, but you can also group pages in a single file.
-2. Add a new function with the `@template` decorator, which takes the same arguments as `@rx.page`.
-3. Import the page in your `{your_app}/pages/__init__.py` file and it will automatically be added to the app.
-
-
-### Adding Components
-
-In order to keep your code organized, we recommend putting components that are
-used across multiple pages in the `{your_app}/components/` directory.
-
-In this template, we have a sidebar component in `{your_app}/components/sidebar.py`.
-
-### Adding State
-
-As your app grows, we recommend using [substates](https://reflex.dev/docs/substates/overview/)
-to organize your state.
-
-You can either define substates in their own files, or if the state is
-specific to a page, you can define it in the page file itself.
+We welcome any feedback or suggestions for improving Moodify. Feel free to reach out to us with your thoughts!
